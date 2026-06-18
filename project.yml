@@ -4,6 +4,7 @@ options:
   deploymentTarget:
     iOS: "16.0"
   xcodeVersion: "15.4"
+  projectFormat: "xcode15_0" # 👈 Добавьте эту строку
   createIntermediateGroups: true
 
 settings:
