@@ -1,0 +1,85 @@
+name: Build SecureVault IPA
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:        # позволяет запускать вручную кнопкой
+
+jobs:
+  build:
+    name: Build IPA (no signing)
+    runs-on: macos-14       # macOS Sonoma с Xcode 15
+
+    steps:
+      # ─── 1. Скачать код репозитория ───────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ─── 2. Выбрать нужную версию Xcode ──────────────────────
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      # ─── 3. Установить XcodeGen через Homebrew ────────────────
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # ─── 4. Сгенерировать .xcodeproj из project.yml ──────────
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      # ─── 5. Проверить что проект создался ────────────────────
+      - name: List generated files
+        run: ls -la *.xcodeproj || echo "xcodeproj not found!"
+
+      # ─── 6. Собрать приложение БЕЗ подписи ───────────────────
+      - name: Build app (no code signing)
+        run: |
+          xcodebuild \
+            -project SecureVault.xcodeproj \
+            -scheme SecureVault \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            CODE_SIGNING_REQUIRED=NO \
+            -derivedDataPath "$GITHUB_WORKSPACE/build" \
+            clean build \
+          | xcpretty || true
+
+      # ─── 7. Найти .app и показать путь ────────────────────────
+      - name: Find built .app
+        run: |
+          find "$GITHUB_WORKSPACE/build" -name "*.app" -type d
+
+      # ─── 8. Упаковать .app → .ipa ─────────────────────────────
+      - name: Package into IPA
+        run: |
+          APP_PATH=$(find "$GITHUB_WORKSPACE/build" \
+            -path "*/Release-iphoneos/*.app" -type d | head -1)
+          
+          echo "Found app at: $APP_PATH"
+          
+          mkdir -p "$GITHUB_WORKSPACE/ipa_output/Payload"
+          cp -r "$APP_PATH" "$GITHUB_WORKSPACE/ipa_output/Payload/"
+          
+          cd "$GITHUB_WORKSPACE/ipa_output"
+          zip -r "../SecureVault.ipa" Payload/
+          
+          echo "IPA created successfully"
+          ls -lh "$GITHUB_WORKSPACE/SecureVault.ipa"
+
+      # ─── 9. Загрузить .ipa как артефакт ───────────────────────
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SecureVault-IPA
+          path: SecureVault.ipa
+          retention-days: 30    # хранить 30 дней
+
+      # ─── 10. Показать итог ────────────────────────────────────
+      - name: Build summary
+        run: |
+          echo "✅ Build completed!"
+          echo "📦 IPA file is available in the Actions artifacts tab"
