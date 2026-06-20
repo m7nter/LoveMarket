@@ -14,21 +14,30 @@ struct CalculatorView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let spacing: CGFloat = 12
+            let spacing: CGFloat = 10
             let cols: CGFloat = 4
-            let btnSize = (geo.size.width - spacing * (cols + 1)) / cols
+            let rows: CGFloat = 5
+            let totalHSpacing = spacing * (cols + 1)
+            let totalVSpacing = spacing * (rows + 1)
+            let displayHeight = geo.size.height * 0.25
+            let availableH = geo.size.height - displayHeight - totalVSpacing
+            let btnSize = min(
+                (geo.size.width - totalHSpacing) / cols,
+                availableH / rows
+            )
 
             ZStack {
                 Color(red: 0.11, green: 0.11, blue: 0.12).ignoresSafeArea()
 
-                VStack(spacing: spacing) {
+                VStack(spacing: 0) {
                     Spacer()
 
                     Text(vm.display)
-                        .font(.system(size: 72, weight: .light))
+                        .font(.system(size: btnSize * 0.9, weight: .light))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, spacing)
+                        .padding(.horizontal, spacing * 2)
+                        .padding(.bottom, spacing)
                         .lineLimit(1)
                         .minimumScaleFactor(0.3)
 
@@ -43,12 +52,14 @@ struct CalculatorView: View {
                                 )
                             }
                         }
+                        .padding(.bottom, spacing)
                     }
                     .padding(.horizontal, spacing)
-                    .padding(.bottom, spacing)
                 }
+                .padding(.bottom, geo.safeAreaInsets.bottom > 0 ? geo.safeAreaInsets.bottom : spacing)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .onChange(of: vm.shouldUnlock) { val in
             if val { onUnlock() }
         }
