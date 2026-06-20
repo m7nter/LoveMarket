@@ -6,13 +6,16 @@ struct SecureVaultApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if isUnlocked {
-                VaultView()
-            } else {
-                CalculatorView(onUnlock: {
-                    isUnlocked = true
-                })
+            Group {
+                if isUnlocked {
+                    VaultView()
+                } else {
+                    CalculatorView(onUnlock: {
+                        isUnlocked = true
+                    })
+                }
             }
+            .preferredColorScheme(.dark)
         }
     }
 }
