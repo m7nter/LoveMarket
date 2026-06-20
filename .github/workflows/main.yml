@@ -20,6 +20,68 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Generate App Icon
+        run: |
+          python3 - <<'EOF'
+          from PIL import Image, ImageDraw, ImageFont
+          import os
+
+          size = 1024
+          img = Image.new("RGB", (size, size), color=(0, 0, 0))
+          d = ImageDraw.Draw(img)
+
+          try:
+              font_large = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 80)
+              font_btn = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 36)
+          except:
+              font_large = ImageFont.load_default()
+              font_btn = ImageFont.load_default()
+
+          margin = 40
+          cols = 4
+          btn_size = (size - margin * 2 - (cols - 1) * 12) // cols
+          start_y = 200
+
+          d.text((size - margin - 10, start_y - 30), "0",
+                 fill="white", anchor="rs", font=font_large)
+
+          buttons = [
+              ("AC", 0, 0), ("+/-", 0, 1), ("%", 0, 2), ("÷", 0, 3),
+              ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("×", 1, 3),
+              ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("-", 2, 3),
+              ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("+", 3, 3),
+              ("0", 4, 0), (".", 4, 2), ("=", 4, 3),
+          ]
+
+          for (label, row, col) in buttons:
+              x = margin + col * (btn_size + 12)
+              y = start_y + row * (btn_size + 12)
+              if label in ["÷", "×", "-", "+", "="]:
+                  color = (255, 159, 10)
+              elif label in ["AC", "+/-", "%"]:
+                  color = (100, 100, 100)
+              else:
+                  color = (51, 51, 51)
+              if label == "0":
+                  d.ellipse([x, y, x + btn_size * 2 + 12, y + btn_size], fill=color)
+              else:
+                  d.ellipse([x, y, x + btn_size, y + btn_size], fill=color)
+              cx = x + (btn_size * 2 + 12) // 2 if label == "0" else x + btn_size // 2
+              cy = y + btn_size // 2
+              d.text((cx, cy), label, fill="white", anchor="mm", font=font_btn)
+
+          os.makedirs("Resources/Assets.xcassets/AppIcon.appiconset", exist_ok=True)
+
+          with open("Resources/Assets.xcassets/Contents.json", "w") as f:
+              f.write('{"info":{"author":"xcode","version":1}}')
+
+          with open("Resources/Assets.xcassets/AppIcon.appiconset/Contents.json", "w") as f:
+              f.write('{"images":[{"idiom":"universal","platform":"ios","size":"1024x1024","scale":"1x","filename":"AppIcon.png"}],"info":{"author":"xcode","version":1}}')
+
+          img.save("Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png")
+          print("Icon generated!")
+          EOF
+
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
