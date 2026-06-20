@@ -14,52 +14,44 @@ struct CalculatorView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let spacing: CGFloat = 10
-            let cols: CGFloat = 4
-            let rows: CGFloat = 5
-            let totalHSpacing = spacing * (cols + 1)
-            let totalVSpacing = spacing * (rows + 1)
-            let displayHeight = geo.size.height * 0.25
-            let availableH = geo.size.height - displayHeight - totalVSpacing
-            let btnSize = min(
-                (geo.size.width - totalHSpacing) / cols,
-                availableH / rows
-            )
+            let spacing: CGFloat = 12
+            let btnSize = (geo.size.width - spacing * 5) / 4
 
             ZStack {
-                Color(red: 0.11, green: 0.11, blue: 0.12).ignoresSafeArea()
+                Color(red: 0.11, green: 0.11, blue: 0.12)
 
                 VStack(spacing: 0) {
                     Spacer()
 
                     Text(vm.display)
-                        .font(.system(size: btnSize * 0.9, weight: .light))
+                        .font(.system(size: 80, weight: .light))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, spacing * 2)
-                        .padding(.bottom, spacing)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
                         .lineLimit(1)
                         .minimumScaleFactor(0.3)
 
-                    ForEach(buttons, id: \.self) { row in
-                        HStack(spacing: spacing) {
-                            ForEach(row, id: \.self) { btn in
-                                CalculatorButton(
-                                    title: btn,
-                                    vm: vm,
-                                    size: btnSize,
-                                    spacing: spacing
-                                )
+                    VStack(spacing: spacing) {
+                        ForEach(buttons, id: \.self) { row in
+                            HStack(spacing: spacing) {
+                                ForEach(row, id: \.self) { btn in
+                                    CalculatorButton(
+                                        title: btn,
+                                        vm: vm,
+                                        size: btnSize,
+                                        spacing: spacing
+                                    )
+                                }
                             }
                         }
-                        .padding(.bottom, spacing)
                     }
                     .padding(.horizontal, spacing)
+                    .padding(.bottom, spacing)
                 }
-                .padding(.bottom, geo.safeAreaInsets.bottom > 0 ? geo.safeAreaInsets.bottom : spacing)
             }
         }
-        .ignoresSafeArea(edges: .bottom)
+        .ignoresSafeArea()
         .onChange(of: vm.shouldUnlock) { val in
             if val { onUnlock() }
         }
