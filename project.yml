@@ -4,12 +4,12 @@ options:
   deploymentTarget:
     iOS: "16.0"
   xcodeVersion: "15.4"
-  projectFormat: "xcode15_0" # 👈 Добавьте эту строку
+  projectFormat: "xcode15_0"
   createIntermediateGroups: true
 
 settings:
   base:
-    PRODUCT_NAME: SecureVault
+    PRODUCT_NAME: Калькулятор
     SWIFT_VERSION: 5.9
     TARGETED_DEVICE_FAMILY: 1
     IPHONEOS_DEPLOYMENT_TARGET: 16.0
@@ -31,5 +31,6 @@ targets:
       - path: Resources
     settings:
       base:
+        PRODUCT_NAME: Калькулятор
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SWIFT_EMIT_LOC_STRINGS: YES
