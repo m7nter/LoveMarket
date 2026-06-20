@@ -5,7 +5,6 @@ extension Color {
         let hexString = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hexString).scanHexInt64(&int)
-
         let a, r, g, b: UInt64
         switch hexString.count {
         case 3:
@@ -17,11 +16,6 @@ extension Color {
         default:
             (a, r, g, b) = (255, 0, 0, 0)
         }
-
-        self.init(.sRGB,
-                  red: Double(r) / 255.0,
-                  green: Double(g) / 255.0,
-                  blue: Double(b) / 255.0,
-                  opacity: Double(a) / 255.0)
+        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
     }
 }
