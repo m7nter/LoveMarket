@@ -13,29 +13,40 @@ struct CalculatorView: View {
     ]
 
     var body: some View {
-        ZStack {
-            Color(red: 0.11, green: 0.11, blue: 0.12).ignoresSafeArea()
+        GeometryReader { geo in
+            let spacing: CGFloat = 12
+            let cols: CGFloat = 4
+            let btnSize = (geo.size.width - spacing * (cols + 1)) / cols
 
-            VStack(spacing: 12) {
-                Spacer()
+            ZStack {
+                Color(red: 0.11, green: 0.11, blue: 0.12).ignoresSafeArea()
 
-                Text(vm.display)
-                    .font(.system(size: 72, weight: .light))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.horizontal, 24)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
+                VStack(spacing: spacing) {
+                    Spacer()
 
-                ForEach(buttons, id: \.self) { row in
-                    HStack(spacing: 12) {
-                        ForEach(row, id: \.self) { btn in
-                            CalculatorButton(title: btn, vm: vm)
+                    Text(vm.display)
+                        .font(.system(size: 72, weight: .light))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding(.horizontal, spacing)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.3)
+
+                    ForEach(buttons, id: \.self) { row in
+                        HStack(spacing: spacing) {
+                            ForEach(row, id: \.self) { btn in
+                                CalculatorButton(
+                                    title: btn,
+                                    vm: vm,
+                                    size: btnSize,
+                                    spacing: spacing
+                                )
+                            }
                         }
                     }
+                    .padding(.horizontal, spacing)
+                    .padding(.bottom, spacing)
                 }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 8)
             }
         }
         .onChange(of: vm.shouldUnlock) { val in
@@ -47,8 +58,11 @@ struct CalculatorView: View {
 struct CalculatorButton: View {
     let title: String
     @ObservedObject var vm: CalculatorViewModel
+    let size: CGFloat
+    let spacing: CGFloat
 
     private var isWide: Bool { title == "0" }
+
     private var bgColor: Color {
         switch title {
         case "AC", "+/−", "%":
@@ -65,9 +79,12 @@ struct CalculatorButton: View {
             vm.tap(title)
         } label: {
             Text(title)
-                .font(.system(size: 32, weight: .regular))
+                .font(.system(size: size * 0.38, weight: .regular))
                 .foregroundColor(.white)
-                .frame(width: isWide ? 171 : 80, height: 80)
+                .frame(
+                    width: isWide ? size * 2 + spacing : size,
+                    height: size
+                )
                 .background(bgColor)
                 .clipShape(Capsule())
         }
