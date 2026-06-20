@@ -20,6 +20,9 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Install Python dependencies
+        run: pip3 install Pillow --break-system-packages
+
       - name: Generate App Icon
         run: |
           python3 - <<'EOF'
