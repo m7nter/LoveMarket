@@ -4,10 +4,10 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>Калькулятор</string>
+    <string>Calculator</string>
 
     <key>CFBundleDisplayName</key>
-    <string>Калькулятор</string>
+    <string>Calculator</string>
 
     <key>CFBundleIdentifier</key>
     <string>com.securevault.app</string>
@@ -43,8 +43,5 @@
         <key>UIApplicationSupportsMultipleScenes</key>
         <false/>
     </dict>
-
-    <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
 </dict>
 </plist>
