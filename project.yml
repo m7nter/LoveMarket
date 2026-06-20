@@ -28,7 +28,7 @@ targets:
       - path: Sources/SecureVault
         type: group
     resources:
-      - path: Resources/Info.plist
+      - path: Resources
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
