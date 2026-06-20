@@ -33,20 +33,22 @@ jobs:
 
       # ─── 6. Собрать приложение БЕЗ подписи ───────────────────
       - name: Build app (no code signing)
-        run: |
-          xcodebuild \
-            -project SecureVault.xcodeproj \
-            -scheme SecureVault \
-            -configuration Release \
-            -sdk iphoneos \
-            -destination "generic/platform=iOS" \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGN_IDENTITY="" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            CODE_SIGNING_REQUIRED=NO \
-            -derivedDataPath "$GITHUB_WORKSPACE/build" \
-            clean build \
-          | xcpretty || true
+  run: |
+    xcodebuild \
+      -project SecureVault.xcodeproj \
+      -scheme SecureVault \
+      -configuration Release \
+      -sdk iphoneos \
+      -destination "generic/platform=iOS" \
+      ONLY_ACTIVE_ARCH=NO \
+      CODE_SIGNING_ALLOWED=NO \
+      CODE_SIGN_IDENTITY="" \
+      CODE_SIGNING_REQUIRED=NO \
+      PROVISIONING_PROFILE_SPECIFIER="" \
+      SWIFT_SERIALIZE_DEBUGGING_OPTIONS=NO \
+      -derivedDataPath "$GITHUB_WORKSPACE/build" \
+      build
+
 
       # ─── 7. Найти .app и показать путь ────────────────────────
       - name: Find built .app
