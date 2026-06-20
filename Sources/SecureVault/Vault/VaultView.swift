@@ -13,7 +13,7 @@ struct VaultView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(hex: "#1C1C1E").ignoresSafeArea()
+                Color(red: 0.11, green: 0.11, blue: 0.12).ignoresSafeArea()
 
                 VStack(spacing: 24) {
                     Image(systemName: "lock.shield.fill")
@@ -80,7 +80,8 @@ struct VaultActionButton: View {
                     .foregroundColor(.gray)
             }
             .frame(width: 130, height: 100)
-            .background(Color(hex: "#2C2C2E"))
+            .background(Color(red: 0.17, green: 0.17, blue: 0.18))
+
             .cornerRadius(16)
         }
     }
