@@ -14,7 +14,7 @@ struct CalculatorView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#1C1C1E").ignoresSafeArea()
+            Color(red: 0.11, green: 0.11, blue: 0.12).ignoresSafeArea()
 
             VStack(spacing: 12) {
                 Spacer()
@@ -51,9 +51,12 @@ struct CalculatorButton: View {
     private var isWide: Bool { title == "0" }
     private var bgColor: Color {
         switch title {
-        case "AC", "+/−", "%": return Color(hex: "#A5A5A5")
-        case "÷", "×", "−", "+", "=": return Color(hex: "#FF9F0A")
-        default: return Color(hex: "#333333")
+        case "AC", "+/−", "%":
+            return Color(red: 0.65, green: 0.65, blue: 0.65)
+        case "÷", "×", "−", "+", "=":
+            return Color(red: 1.0, green: 0.62, blue: 0.04)
+        default:
+            return Color(red: 0.2, green: 0.2, blue: 0.2)
         }
     }
 
@@ -64,10 +67,7 @@ struct CalculatorButton: View {
             Text(title)
                 .font(.system(size: 32, weight: .regular))
                 .foregroundColor(.white)
-                .frame(
-                    width: isWide ? 171 : 80,
-                    height: 80
-                )
+                .frame(width: isWide ? 171 : 80, height: 80)
                 .background(bgColor)
                 .clipShape(Capsule())
         }
